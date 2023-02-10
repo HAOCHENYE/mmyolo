@@ -63,7 +63,7 @@ def main():
     cfg = Config.fromfile(args.config)
     # replace the ${key} with the value of cfg.key
     # cfg = replace_cfg_vals(cfg)
-    cfg.launcher = args.launcher
+    cfg.runner.launcher = args.launcher
 
     # work_dir is determined in this priority: CLI > segment in file > filename
     if args.work_dir is not None:
