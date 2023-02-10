@@ -4,11 +4,11 @@ import logging
 import os
 import os.path as osp
 
-from mmengine.config import Config, DictAction
+from mmengine.config import DictAction
+from mmengine.config.auto_call_config import Config
 from mmengine.logging import print_log
 from mmengine.runner.experimental_runner import Runner
 
-from mmyolo.registry import RUNNERS
 from mmyolo.utils import register_all_modules
 
 
@@ -64,8 +64,6 @@ def main():
     # replace the ${key} with the value of cfg.key
     # cfg = replace_cfg_vals(cfg)
     cfg.launcher = args.launcher
-    if args.cfg_options is not None:
-        cfg.merge_from_dict(args.cfg_options)
 
     # work_dir is determined in this priority: CLI > segment in file > filename
     if args.work_dir is not None:
@@ -100,14 +98,8 @@ def main():
         cfg.load_from = args.resume
 
     # build the runner from config
-    if 'runner_type' not in cfg:
-        # build the default runner
-        runner = Runner.from_cfg(cfg)
-    else:
-        # build customized runner from the registry
-        # if 'runner_type' is set in the cfg
-        runner = RUNNERS.build(cfg)
-
+    # built_cfg = cfg.build()
+    runner = Runner(**cfg.runner.kwargs)
     # start training
     runner.train()
 
