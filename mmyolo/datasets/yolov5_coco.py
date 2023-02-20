@@ -28,7 +28,10 @@ class BatchShapePolicyDataset(BaseDetDataset):
 
         # batch_shapes_cfg
         if self.batch_shapes_cfg:
-            batch_shapes_policy = TASK_UTILS.build(self.batch_shapes_cfg)
+            if isinstance(self.batch_shapes_cfg, dict):
+                batch_shapes_policy = TASK_UTILS.build(self.batch_shapes_cfg)
+            else:
+                batch_shapes_policy = self.batch_shapes_cfg
             self.data_list = batch_shapes_policy(self.data_list)
             del batch_shapes_policy
 

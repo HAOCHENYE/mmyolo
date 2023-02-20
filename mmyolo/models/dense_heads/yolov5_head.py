@@ -188,7 +188,9 @@ class YOLOv5Head(BaseDenseHead):
                  init_cfg: OptMultiConfig = None):
         super().__init__(init_cfg=init_cfg)
 
-        self.head_module = MODELS.build(head_module)
+        if isinstance(head_module, dict):
+            head_module = MODELS.build(head_module)
+        self.head_module = head_module
         self.num_classes = self.head_module.num_classes
         self.featmap_strides = self.head_module.featmap_strides
         self.num_levels = len(self.featmap_strides)
@@ -196,11 +198,19 @@ class YOLOv5Head(BaseDenseHead):
         self.train_cfg = train_cfg
         self.test_cfg = test_cfg
 
-        self.loss_cls: nn.Module = MODELS.build(loss_cls)
-        self.loss_bbox: nn.Module = MODELS.build(loss_bbox)
-        self.loss_obj: nn.Module = MODELS.build(loss_obj)
+        if isinstance(loss_cls, dict):
+            loss_cls = MODELS.build(loss_cls)
+        if isinstance(loss_bbox, dict):
+            loss_bbox = MODELS.build(loss_bbox)
+        if isinstance(loss_obj, dict):
+            loss_obj = MODELS.build(loss_obj)
+        self.loss_cls: nn.Module = loss_cls
+        self.loss_bbox: nn.Module = loss_bbox
+        self.loss_obj: nn.Module = loss_obj
 
-        self.prior_generator = TASK_UTILS.build(prior_generator)
+        if isinstance(prior_generator, dict):
+            prior_generator = TASK_UTILS.build(prior_generator)
+        self.prior_generator = prior_generator
         self.bbox_coder = TASK_UTILS.build(bbox_coder)
         self.num_base_priors = self.prior_generator.num_base_priors[0]
 
